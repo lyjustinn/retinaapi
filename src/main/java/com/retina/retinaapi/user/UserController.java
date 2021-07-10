@@ -1,5 +1,6 @@
 package com.retina.retinaapi.user;
 
+import com.retina.retinaapi.mapper.UserDto;
 import com.retina.retinaapi.security.AuthRequest;
 import com.retina.retinaapi.security.AuthResponse;
 import com.retina.retinaapi.security.JwtUtilities;
@@ -12,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @RestController
@@ -39,6 +41,20 @@ public class UserController {
         return ResponseEntity.ok(List.of(temp));
     }
 
+    @GetMapping(path = "{userId}")
+    public ResponseEntity<?> getUser(@PathVariable("userId") Long userId) {
+        try {
+            return ResponseEntity.ok(this.userService.getUser(userId));
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>("Could not find the specified user", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping()
+    public void createUser(@RequestBody UserDto newUser) {
+        this.userService.addUser(newUser);
+    }
+
     @PostMapping(path= "/authenticate")
     public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest authRequest) throws Exception {
         try {
@@ -54,5 +70,10 @@ public class UserController {
         final String jwt = this.jwtUtilities.generateToken(userDetails);
 
         return ResponseEntity.ok(new AuthResponse(jwt));
+    }
+
+    @PutMapping(path = "{userId}")
+    public void updateUser(@PathVariable("userId") Long userId, @RequestBody UserDto userUpdates) {
+        this.userService.updateUser(userId, userUpdates);
     }
 }
