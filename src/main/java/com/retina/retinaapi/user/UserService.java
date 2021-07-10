@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -19,15 +21,18 @@ public class UserService implements UserDetailsService {
 
     private final Mapper mapper;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserService(UserRepository userRepository, Mapper mapper) {
+    public UserService(UserRepository userRepository, Mapper mapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.mapper = mapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return new User("user", "password");
+        return this.userRepository.findByUsername(s).orElseThrow(() -> new UsernameNotFoundException("User DNE"));
     }
 
     public User getUser(long id) throws EntityNotFoundException {
@@ -38,6 +43,9 @@ public class UserService implements UserDetailsService {
         Optional<User> exists = this.userRepository.findByUsername(userDto.getUsername());
 
         if (exists.isPresent()) throw new EntityExistsException("Cannot create a user with that username");
+
+        String saltedPassword = this.passwordEncoder.encode(userDto.getPassword());
+        userDto.setPassword(saltedPassword);
 
         User newUser = this.mapper.mapUser(userDto);
         this.userRepository.save(newUser);
