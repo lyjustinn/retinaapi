@@ -1,6 +1,5 @@
 package com.retina.retinaapi.image;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.retina.retinaapi.tag.ImageTag;
 import com.retina.retinaapi.user.User;
@@ -60,21 +59,6 @@ public class Image {
         this.resourceLink = resourceLink;
     }
 
-    //    public Image(String name, String description, String resourceLink, User owner) {
-//        this.name = name;
-//        this.description = description;
-//        this.resourceLink = resourceLink;
-//        this.owner = owner;
-//    }
-//
-//    public Image(Long id, String name, String description, String resourceLink, User owner) {
-//        this.id = id;
-//        this.name = name;
-//        this.description = description;
-//        this.resourceLink = resourceLink;
-//        this.owner = owner;
-//    }
-
     public Long getId() {
         return id;
     }
@@ -91,9 +75,9 @@ public class Image {
         return resourceLink;
     }
 
-//    public User getOwner() {
-//        return owner;
-//    }
+    public User getOwner() {
+        return owner;
+    }
 
     @JsonIgnore
     public Set<ImageTag> getTags() {
@@ -112,7 +96,7 @@ public class Image {
         this.resourceLink = resourceLink;
     }
 
-//    public void setOwner(User owner) {
-//        this.owner = owner;
-//    }
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
 }
