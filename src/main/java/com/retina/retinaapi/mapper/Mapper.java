@@ -11,6 +11,6 @@ public class Mapper {
 
     public User mapUser (UserDto userDto) {
         if (userDto == null) return null;
-        return new User(userDto.getUsername(), userDto.getPassword());
+        return new User(userDto.getUsername(), userDto.getPassword(), userDto.getName(), userDto.getBio());
     }
 }

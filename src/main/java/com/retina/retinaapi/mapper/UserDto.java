@@ -8,6 +8,10 @@ public class UserDto {
 
     private String password;
 
+    private String name;
+
+    private String bio;
+
     public UserDto() {
     }
 
@@ -20,6 +24,14 @@ public class UserDto {
         this.id = id;
         this.username = username;
         this.password = password;
+    }
+
+    public UserDto(Long id, String username, String password, String name, String bio) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.bio = bio;
     }
 
     public String getUsername() {
@@ -44,5 +56,21 @@ public class UserDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 }

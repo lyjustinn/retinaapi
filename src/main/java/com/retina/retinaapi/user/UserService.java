@@ -2,6 +2,7 @@ package com.retina.retinaapi.user;
 
 import com.retina.retinaapi.mapper.Mapper;
 import com.retina.retinaapi.mapper.UserDto;
+import com.retina.retinaapi.mapper.UserUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,8 +37,12 @@ public class UserService implements UserDetailsService {
         return this.userRepository.findByUsername(s).orElseThrow(() -> new UsernameNotFoundException("User DNE"));
     }
 
-    public User getUser(long id) throws EntityNotFoundException {
-        return this.userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User with id " + id + " DNE"));
+    public List<User> getAllUsers () {
+        return this.userRepository.findAll();
+    }
+
+    public User getUser(long id) {
+        return this.userRepository.findById(id).orElse(null);
     }
 
     public void addUser(UserDto userDto) {
@@ -51,15 +57,25 @@ public class UserService implements UserDetailsService {
         this.userRepository.save(newUser);
     }
 
-    public void updateUser(Long id, UserDto userDto) {
-        User user = this.userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User with id " + id + " DNE"));
+    public void updateUser(Long id, UserUpdateDto userDto) {
+        Optional<User> isUser = this.userRepository.findById(id);
 
-        if (userDto.getUsername().length() > 0) {
-            user.setUsername(userDto.getUsername());
+        if (!isUser.isPresent()) return;
+
+        User user = isUser.get();
+
+        if (userDto.getName().length() > 0) {
+            user.setName(userDto.getName());
+        }
+
+        if (userDto.getBio().length() > 0) {
+            user.setBio(userDto.getBio());
         }
 
         if (userDto.getPassword().length() > 0) {
-            user.setPassword(userDto.getPassword());
+            user.setPassword(this.passwordEncoder.encode(userDto.getPassword()));
         }
+
+        this.userRepository.save(user);
     }
 }

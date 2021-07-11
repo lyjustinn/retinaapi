@@ -1,6 +1,7 @@
 package com.retina.retinaapi.user;
 
 import com.retina.retinaapi.mapper.UserDto;
+import com.retina.retinaapi.mapper.UserUpdateDto;
 import com.retina.retinaapi.security.AuthRequest;
 import com.retina.retinaapi.security.AuthResponse;
 import com.retina.retinaapi.security.JwtUtilities;
@@ -38,16 +39,16 @@ public class UserController {
 
         User temp = new User();
 
-        return ResponseEntity.ok(List.of(temp));
+        return ResponseEntity.ok(this.userService.getAllUsers());
     }
 
     @GetMapping(path = "{userId}")
     public ResponseEntity<?> getUser(@PathVariable("userId") Long userId) {
-        try {
-            return ResponseEntity.ok(this.userService.getUser(userId));
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>("Could not find the specified user", HttpStatus.NOT_FOUND);
-        }
+        User user = this.userService.getUser(userId);
+
+        if (user == null) return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
+
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping()
@@ -73,7 +74,22 @@ public class UserController {
     }
 
     @PutMapping(path = "{userId}")
-    public void updateUser(@PathVariable("userId") Long userId, @RequestBody UserDto userUpdates) {
-        this.userService.updateUser(userId, userUpdates);
+    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String authheader, @PathVariable("userId") Long userId,
+                                        @RequestBody UserUpdateDto userUpdates) {
+
+        // auth header must have valid token if it reaches this point
+        final String token = authheader.substring(7);
+
+        UserDetails user = this.userService.getUser(userId);
+        final String username = this.jwtUtilities.extractUsername(token);
+
+        if (user == null) return new ResponseEntity<String>("Could not perform update", HttpStatus.BAD_REQUEST);
+
+        if (username.equals(user.getUsername())) {
+            this.userService.updateUser(userId, userUpdates);
+            return new ResponseEntity<Void>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<String>("Could not perform update", HttpStatus.BAD_REQUEST);
     }
 }

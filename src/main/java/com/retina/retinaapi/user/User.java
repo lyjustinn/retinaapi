@@ -28,6 +28,10 @@ public class User implements UserDetails {
 
     private String password;
 
+    private String name;
+
+    private String bio;
+
     public User() {
     }
 
@@ -36,10 +40,29 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    public User(String username, String password, String name, String bio) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.bio = bio;
+    }
+
     public User(Long id, String username, String password) {
         this.id = id;
         this.username = username;
         this.password = password;
+    }
+
+    public User(Long id, String username, String password, String name, String bio) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.bio = bio;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
@@ -63,6 +86,22 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     @Override
