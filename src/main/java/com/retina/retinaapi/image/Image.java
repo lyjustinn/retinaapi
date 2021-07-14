@@ -28,7 +28,7 @@ public class Image {
 
     private String description;
 
-    private String resourceLink;
+    private String resourceName;
 
     @ManyToOne
     private User owner;
@@ -46,17 +46,28 @@ public class Image {
     public Image() {
     }
 
-    public Image(String name, String description, String resourceLink) {
+    public Image(String name, String description) {
         this.name = name;
         this.description = description;
-        this.resourceLink = resourceLink;
     }
 
-    public Image(Long id, String name, String description, String resourceLink) {
+    public Image(String name, String description, String resourceName) {
+        this.name = name;
+        this.description = description;
+        this.resourceName = resourceName;
+    }
+
+    public Image(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.resourceLink = resourceLink;
+    }
+
+    public Image(Long id, String name, String description, String resourceName) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.resourceName = resourceName;
     }
 
     public Long getId() {
@@ -71,8 +82,8 @@ public class Image {
         return description;
     }
 
-    public String getResourceLink() {
-        return resourceLink;
+    public String getResourceName() {
+        return resourceName;
     }
 
     public User getOwner() {
@@ -92,8 +103,8 @@ public class Image {
         this.description = description;
     }
 
-    public void setResourceLink(String resourceLink) {
-        this.resourceLink = resourceLink;
+    public void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
     }
 
     public void setOwner(User owner) {
