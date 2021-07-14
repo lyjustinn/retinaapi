@@ -21,7 +21,7 @@ public class Mapper {
     public Image mapImage (ImageDto imageDto, User owner, String resourceName) {
         if (imageDto == null || owner == null) return null;
 
-        Image newImage = new Image(imageDto.getName(), imageDto.getDescription());
+        Image newImage = new Image(imageDto.getName(), imageDto.getDescription(), resourceName);
         newImage.setOwner(owner);
 
         return newImage;
