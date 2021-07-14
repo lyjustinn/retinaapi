@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ImageService {
@@ -58,6 +59,26 @@ public class ImageService {
         image.getTags().add(t1);
 
         this.imageTagService.addTag(t1);
+        this.imageRepository.save(image);
+    }
+
+    public void updateImage(ImageDto imageDto, String username) {
+        Optional<Image> isImage = this.imageRepository.findById(imageDto.getId());
+
+        if (!isImage.isPresent()) return;
+
+        Image image = isImage.get();
+
+        if (image.getOwner().getUsername() != username) return;
+
+        if (imageDto.getName().length() > 0) {
+            image.setName(imageDto.getName());
+        }
+
+        if (imageDto.getDescription().length() > 0) {
+            image.setDescription(imageDto.getDescription());
+        }
+
         this.imageRepository.save(image);
     }
 

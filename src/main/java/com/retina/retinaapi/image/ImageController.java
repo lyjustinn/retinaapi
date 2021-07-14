@@ -1,15 +1,11 @@
 package com.retina.retinaapi.image;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.retina.retinaapi.aws.S3Util;
 import com.retina.retinaapi.mapper.ImageDto;
-import com.retina.retinaapi.mapper.ImageUpdateDto;
 import com.retina.retinaapi.security.JwtUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,7 +57,10 @@ public class ImageController {
     }
 
     @PutMapping(path = "{imageId}")
-    public ResponseEntity<?> updateImage(@RequestBody ImageUpdateDto imageUpdateDto) {
-        return new ResponseEntity(HttpStatus.OK);
+    public void updateImage(@RequestHeader("Authorization") String authheader, @RequestBody ImageDto imageDto) {
+        final String token = authheader.substring(7);
+        final String username = this.jwtUtilities.extractUsername(token);
+
+        this.imageService.updateImage(imageDto, username);
     }
 }
