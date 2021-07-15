@@ -1,5 +1,6 @@
 package com.retina.retinaapi.image;
 
+import com.retina.retinaapi.aws.RekognitionUtil;
 import com.retina.retinaapi.aws.S3Util;
 import com.retina.retinaapi.mapper.ImageDto;
 import com.retina.retinaapi.mapper.Mapper;
@@ -20,6 +21,8 @@ import java.util.Optional;
 @Service
 public class ImageService {
 
+    private final RekognitionUtil rekognitionUtil;
+
     private final S3Util s3Util;
 
     private final Mapper mapper;
@@ -31,8 +34,9 @@ public class ImageService {
     private final UserRepository userRepository;
 
     @Autowired
-    public ImageService(S3Util s3Util, Mapper mapper, ImageRepository imageRepository, ImageTagService imageTagService,
-                        UserRepository userRepository) {
+    public ImageService(RekognitionUtil rekognitionUtil, S3Util s3Util, Mapper mapper, ImageRepository imageRepository,
+                        ImageTagService imageTagService, UserRepository userRepository) {
+        this.rekognitionUtil = rekognitionUtil;
         this.s3Util = s3Util;
         this.mapper = mapper;
         this.imageRepository = imageRepository;
@@ -54,11 +58,16 @@ public class ImageService {
         this.s3Util.putObject(file.getInputStream(), "users/" + username + "/" + file.getOriginalFilename(), file.getSize());
 
         Image image = this.mapper.mapImage(imageDto, currentUser, file.getOriginalFilename());
-        ImageTag t1 = new ImageTag("tag1");
-        t1.getImages().add(image);
-        image.getTags().add(t1);
 
-        this.imageTagService.addTag(t1);
+        List<ImageTag> tags = this.imageTagService.generateTags(file);
+
+        for (ImageTag tag : tags) {
+            tag.getImages().add(image);
+            image.getTags().add(tag);
+
+            this.imageTagService.saveTag(tag);
+        }
+
         this.imageRepository.save(image);
     }
 

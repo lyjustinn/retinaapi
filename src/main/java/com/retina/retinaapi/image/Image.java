@@ -40,7 +40,6 @@ public class Image {
             },
             mappedBy = "images"
     )
-    @JsonIgnore
     private Set<ImageTag> imageTags =  new HashSet<>();
 
     public Image() {
@@ -90,7 +89,6 @@ public class Image {
         return owner;
     }
 
-    @JsonIgnore
     public Set<ImageTag> getTags() {
         return imageTags;
     }

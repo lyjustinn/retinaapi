@@ -1,5 +1,6 @@
 package com.retina.retinaapi.tag;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.retina.retinaapi.image.Image;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class ImageTag {
     )
     private long id;
 
+    @Column( unique = true )
     private String name;
 
     @ManyToMany(
@@ -35,6 +37,7 @@ public class ImageTag {
             joinColumns = @JoinColumn(name = "imagetag_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
+    @JsonIgnore
     private Set<Image> images = new HashSet<>();
 
     public ImageTag() {
@@ -57,6 +60,7 @@ public class ImageTag {
         return id;
     }
 
+    @JsonIgnore
     public Set<Image> getImages() {
         return images;
     }
