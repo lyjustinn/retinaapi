@@ -89,4 +89,16 @@ public class ImageService {
         this.imageRepository.save(image);
     }
 
+    public void deleteImage(Long imageId, String username) throws Error {
+        Optional<Image> isImage = this.imageRepository.findById(imageId);
+
+        if (!isImage.isPresent()) throw new EntityNotFoundException("DNE");
+
+        Image image = isImage.get();
+
+        if (image.getOwner().getUsername() != username) throw new IllegalAccessError("not valid action");
+
+        // delete the image (auto update since the image is the relationship owner)
+        this.imageRepository.delete(image);
+    }
 }
