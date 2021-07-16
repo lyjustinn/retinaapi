@@ -69,8 +69,8 @@ public class ImageService {
 
     }
 
-    public void updateImage(ImageDto imageDto, String username) {
-        Optional<Image> isImage = this.imageRepository.findById(imageDto.getId());
+    public void updateImage(ImageDto imageDto, String username, Long imageId) {
+        Optional<Image> isImage = this.imageRepository.findById(imageId);
 
         if (!isImage.isPresent()) return;
 

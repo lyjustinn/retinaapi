@@ -57,11 +57,12 @@ public class ImageController {
     }
 
     @PutMapping(path = "{imageId}")
-    public void updateImage(@RequestHeader("Authorization") String authHeader, @RequestBody ImageDto imageDto) {
+    public void updateImage(@RequestHeader("Authorization") String authHeader, @RequestBody ImageDto imageDto,
+                            @PathVariable Long imageId) {
         final String token = authHeader.substring(7);
         final String username = this.jwtUtilities.extractUsername(token);
 
-        this.imageService.updateImage(imageDto, username);
+        this.imageService.updateImage(imageDto, username, imageId);
     }
 
     @DeleteMapping(path = "{imageId}")
