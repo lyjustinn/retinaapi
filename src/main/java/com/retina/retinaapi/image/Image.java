@@ -1,6 +1,5 @@
 package com.retina.retinaapi.image;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.retina.retinaapi.tag.ImageTag;
 import com.retina.retinaapi.user.User;
 
@@ -37,8 +36,12 @@ public class Image {
             fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST
-            },
-            mappedBy = "images"
+            }
+    )
+    @JoinTable(
+            name = "image_imagetag",
+            joinColumns = @JoinColumn(name = "image_id"),
+            inverseJoinColumns = @JoinColumn(name = "imageTag_id")
     )
     private Set<ImageTag> imageTags =  new HashSet<>();
 

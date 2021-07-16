@@ -9,7 +9,6 @@ import com.retina.retinaapi.tag.ImageTagService;
 import com.retina.retinaapi.user.User;
 import com.retina.retinaapi.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,11 +63,10 @@ public class ImageService {
         for (ImageTag tag : tags) {
             tag.getImages().add(image);
             image.getTags().add(tag);
-
-            this.imageTagService.saveTag(tag);
         }
 
         this.imageRepository.save(image);
+
     }
 
     public void updateImage(ImageDto imageDto, String username) {
@@ -89,10 +87,6 @@ public class ImageService {
         }
 
         this.imageRepository.save(image);
-    }
-
-    public void addTagToImage (Long imageId, Long tagId) {
-
     }
 
 }
