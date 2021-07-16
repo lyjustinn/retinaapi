@@ -5,6 +5,7 @@ import com.retina.retinaapi.tag.ImageTag;
 import com.retina.retinaapi.user.User;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,5 +26,19 @@ public class Mapper {
         newImage.setOwner(owner);
 
         return newImage;
+    }
+
+    public ImageTagDto mapImageTagDto (ImageTag imageTag) {
+        return new ImageTagDto(imageTag.getName(), imageTag.getImages());
+    }
+
+    public List<ImageTagDto> mapImageTagDtos (List<ImageTag> imageTags) {
+        List<ImageTagDto> imageTagDtos = new ArrayList<ImageTagDto>();
+
+        for (ImageTag imageTag : imageTags) {
+            imageTagDtos.add(this.mapImageTagDto(imageTag));
+        }
+
+        return imageTagDtos;
     }
 }
