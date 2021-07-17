@@ -51,6 +51,10 @@ public class ImageService {
         return this.imageRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Image with id " + id + " DNE"));
     }
 
+    public List<Image> getImageBySearch(String search) {
+        return this.imageRepository.findImageBySearch(search);
+    }
+
     public void addImage (ImageDto imageDto, MultipartFile file, String username) throws IOException{
 
         User currentUser = this.userRepository.findByUsername(username).orElseThrow(() -> new IOException("User DNE"));

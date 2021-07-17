@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -34,6 +35,13 @@ public class ImageController {
     @GetMapping(path = "{imageId}" )
     public ResponseEntity<Image> getImageById(@PathVariable("imageId") Long imageId) {
         return ResponseEntity.ok(this.imageService.getImage(imageId));
+    }
+
+    @GetMapping(path = "search/{searchQuery}")
+    public ResponseEntity<List<Image>> getImagesBySearch(@PathVariable("searchQuery") String query) {
+        final String decodedQuery = java.net.URLDecoder.decode(query, StandardCharsets.UTF_8);
+        System.out.println(decodedQuery);
+        return ResponseEntity.ok(this.imageService.getImageBySearch(decodedQuery));
     }
 
     @PostMapping()
