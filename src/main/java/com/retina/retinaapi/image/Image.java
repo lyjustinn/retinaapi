@@ -23,13 +23,16 @@ public class Image {
     )
     private Long id;
 
+    @Column( nullable = false )
     private String name;
 
     private String description;
 
+    @Column( nullable = false )
     private String resourceName;
 
     @ManyToOne
+    @Column( nullable = false )
     private User owner;
 
     @ManyToMany(

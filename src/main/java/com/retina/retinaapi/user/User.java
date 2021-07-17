@@ -28,8 +28,10 @@ public class User implements UserDetails {
     private String username;
 
     @JsonIgnore
+    @Column( nullable = false )
     private String password;
 
+    @Column( nullable = false )
     private String name;
 
     private String bio;
