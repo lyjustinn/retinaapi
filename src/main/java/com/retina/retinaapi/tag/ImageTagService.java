@@ -12,6 +12,7 @@ import software.amazon.awssdk.services.rekognition.model.Label;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -53,12 +54,12 @@ public class ImageTagService {
             List<String> stringLabels = new ArrayList<String>();
 
             for (Label label : labels) {
-                stringLabels.add(label.name());
+                stringLabels.add(label.name().toLowerCase());
             }
 
             for (Label label : labels) {
                 ImageTag newTag = new ImageTag();
-                newTag.setName(label.name());
+                newTag.setName(label.name().toLowerCase());
 
                 this.addTag(newTag);
             }
