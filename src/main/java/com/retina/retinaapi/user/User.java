@@ -28,8 +28,10 @@ public class User implements UserDetails {
     private String username;
 
     @JsonIgnore
+    @Column( nullable = false )
     private String password;
 
+    @Column( nullable = false )
     private String name;
 
     private String bio;
@@ -130,5 +132,16 @@ public class User implements UserDetails {
     @JsonIgnore
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", bio='" + bio + '\'' +
+                '}';
     }
 }

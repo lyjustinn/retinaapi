@@ -23,10 +23,12 @@ public class Image {
     )
     private Long id;
 
+    @Column( nullable = false )
     private String name;
 
     private String description;
 
+    @Column( nullable = false )
     private String resourceName;
 
     @ManyToOne
@@ -102,10 +104,6 @@ public class Image {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public void setResourceName(String resourceName) {
-        this.resourceName = resourceName;
     }
 
     public void setOwner(User owner) {
