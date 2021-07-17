@@ -1,6 +1,5 @@
 package com.retina.retinaapi.image;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.retina.retinaapi.tag.ImageTag;
 import com.retina.retinaapi.user.User;
 
@@ -34,13 +33,16 @@ public class Image {
     private User owner;
 
     @ManyToMany(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST
-            },
-            mappedBy = "images"
+            }
     )
-    @JsonIgnore
+    @JoinTable(
+            name = "image_imagetag",
+            joinColumns = @JoinColumn(name = "image_id"),
+            inverseJoinColumns = @JoinColumn(name = "imageTag_id")
+    )
     private Set<ImageTag> imageTags =  new HashSet<>();
 
     public Image() {
@@ -90,7 +92,6 @@ public class Image {
         return owner;
     }
 
-    @JsonIgnore
     public Set<ImageTag> getTags() {
         return imageTags;
     }

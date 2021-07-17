@@ -37,10 +37,10 @@ public class ImageController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> addImage(@RequestHeader("Authorization") String authheader, @RequestParam("file") MultipartFile file,
+    public ResponseEntity<?> addImage(@RequestHeader("Authorization") String authHeader, @RequestParam("file") MultipartFile file,
                          @RequestParam("imageData") String imageData) {
 
-        final String token = authheader.substring(7);
+        final String token = authHeader.substring(7);
         final String username = this.jwtUtilities.extractUsername(token);
 
         try {
@@ -57,10 +57,19 @@ public class ImageController {
     }
 
     @PutMapping(path = "{imageId}")
-    public void updateImage(@RequestHeader("Authorization") String authheader, @RequestBody ImageDto imageDto) {
-        final String token = authheader.substring(7);
+    public void updateImage(@RequestHeader("Authorization") String authHeader, @RequestBody ImageDto imageDto,
+                            @PathVariable Long imageId) {
+        final String token = authHeader.substring(7);
         final String username = this.jwtUtilities.extractUsername(token);
 
-        this.imageService.updateImage(imageDto, username);
+        this.imageService.updateImage(imageDto, username, imageId);
+    }
+
+    @DeleteMapping(path = "{imageId}")
+    public void deleteImage(@RequestHeader("Authorization") String authHeader, @PathVariable("imageId") Long imageId) {
+        final String token = authHeader.substring(7);
+        final String username = this.jwtUtilities.extractUsername(token);
+
+        this.imageService.deleteImage(imageId, username);
     }
 }

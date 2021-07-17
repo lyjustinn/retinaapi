@@ -1,5 +1,7 @@
 package com.retina.retinaapi.tag;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.retina.retinaapi.image.Image;
 
 import javax.persistence.*;
@@ -22,19 +24,17 @@ public class ImageTag {
     )
     private long id;
 
+    @Column( unique = true )
     private String name;
 
     @ManyToMany(
             fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST
-            }
+            },
+            mappedBy = "imageTags"
     )
-    @JoinTable(
-            name = "imagetag_image",
-            joinColumns = @JoinColumn(name = "imagetag_id"),
-            inverseJoinColumns = @JoinColumn(name = "image_id")
-    )
+    @JsonBackReference
     private Set<Image> images = new HashSet<>();
 
     public ImageTag() {

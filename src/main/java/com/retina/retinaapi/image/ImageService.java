@@ -1,5 +1,6 @@
 package com.retina.retinaapi.image;
 
+import com.retina.retinaapi.aws.RekognitionUtil;
 import com.retina.retinaapi.aws.S3Util;
 import com.retina.retinaapi.mapper.ImageDto;
 import com.retina.retinaapi.mapper.Mapper;
@@ -8,17 +9,20 @@ import com.retina.retinaapi.tag.ImageTagService;
 import com.retina.retinaapi.user.User;
 import com.retina.retinaapi.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ImageService {
+
+    private final RekognitionUtil rekognitionUtil;
 
     private final S3Util s3Util;
 
@@ -31,8 +35,9 @@ public class ImageService {
     private final UserRepository userRepository;
 
     @Autowired
-    public ImageService(S3Util s3Util, Mapper mapper, ImageRepository imageRepository, ImageTagService imageTagService,
-                        UserRepository userRepository) {
+    public ImageService(RekognitionUtil rekognitionUtil, S3Util s3Util, Mapper mapper, ImageRepository imageRepository,
+                        ImageTagService imageTagService, UserRepository userRepository) {
+        this.rekognitionUtil = rekognitionUtil;
         this.s3Util = s3Util;
         this.mapper = mapper;
         this.imageRepository = imageRepository;
@@ -54,16 +59,20 @@ public class ImageService {
         this.s3Util.putObject(file.getInputStream(), "users/" + username + "/" + file.getOriginalFilename(), file.getSize());
 
         Image image = this.mapper.mapImage(imageDto, currentUser, file.getOriginalFilename());
-        ImageTag t1 = new ImageTag("tag1");
-        t1.getImages().add(image);
-        image.getTags().add(t1);
 
-        this.imageTagService.addTag(t1);
+        List<ImageTag> tags = this.imageTagService.generateTags(file);
+
+        for (ImageTag tag : tags) {
+            tag.getImages().add(image);
+            image.getTags().add(tag);
+        }
+
         this.imageRepository.save(image);
+
     }
 
-    public void updateImage(ImageDto imageDto, String username) {
-        Optional<Image> isImage = this.imageRepository.findById(imageDto.getId());
+    public void updateImage(ImageDto imageDto, String username, Long imageId) {
+        Optional<Image> isImage = this.imageRepository.findById(imageId);
 
         if (!isImage.isPresent()) return;
 
@@ -82,8 +91,25 @@ public class ImageService {
         this.imageRepository.save(image);
     }
 
-    public void addTagToImage (Long imageId, Long tagId) {
+    public void deleteImage(Long imageId, String username) throws Error {
+        Optional<Image> isImage = this.imageRepository.findById(imageId);
 
+        if (!isImage.isPresent()) throw new EntityNotFoundException("DNE");
+
+        Image image = isImage.get();
+
+        if (!image.getOwner().getUsername().equals(username)) throw new IllegalAccessError("not valid action");
+
+        Set<ImageTag> tags = image.getTags();
+
+        this.imageRepository.delete(image);
+        s3Util.deleteObject("users/" + image.getOwner().getUsername() + "/" + image.getResourceName());
+
+        List<Long> toDelete = new ArrayList<Long>();
+        for (ImageTag tag : tags ) {
+            if (tag.getImages().isEmpty()) toDelete.add(tag.getId());
+        }
+
+        this.imageTagService.deleteTags(toDelete);
     }
-
 }
