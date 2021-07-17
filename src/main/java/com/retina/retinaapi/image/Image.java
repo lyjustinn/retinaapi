@@ -32,7 +32,6 @@ public class Image {
     private String resourceName;
 
     @ManyToOne
-    @Column( nullable = false )
     private User owner;
 
     @ManyToMany(
