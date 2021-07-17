@@ -29,9 +29,6 @@ public class Image {
 
     private String resourceName;
 
-    @Transient
-    private String searchString;
-
     @ManyToOne
     private User owner;
 
@@ -97,19 +94,6 @@ public class Image {
 
     public Set<ImageTag> getTags() {
         return imageTags;
-    }
-
-    public String getSearchString() {
-        StringBuilder search = new StringBuilder();
-        search.append(" " + this.name.toLowerCase());
-        search.append(" " + this.description.toLowerCase());
-        search.append(" " + this.owner.toString().toLowerCase());
-
-        for (ImageTag tag : imageTags) {
-            search.append(" " + tag.getName());
-        }
-
-        return searchString;
     }
 
     public void setName(String name) {
