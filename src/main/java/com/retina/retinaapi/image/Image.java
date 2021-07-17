@@ -33,7 +33,7 @@ public class Image {
     private User owner;
 
     @ManyToMany(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST
             }

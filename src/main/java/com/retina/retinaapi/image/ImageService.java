@@ -14,8 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ImageService {
@@ -96,9 +98,18 @@ public class ImageService {
 
         Image image = isImage.get();
 
-        if (image.getOwner().getUsername() != username) throw new IllegalAccessError("not valid action");
+        if (!image.getOwner().getUsername().equals(username)) throw new IllegalAccessError("not valid action");
 
-        // delete the image (auto update since the image is the relationship owner)
+        Set<ImageTag> tags = image.getTags();
+
         this.imageRepository.delete(image);
+        s3Util.deleteObject("users/" + image.getOwner().getUsername() + "/" + image.getResourceName());
+
+        List<Long> toDelete = new ArrayList<Long>();
+        for (ImageTag tag : tags ) {
+            if (tag.getImages().isEmpty()) toDelete.add(tag.getId());
+        }
+
+        this.imageTagService.deleteTags(toDelete);
     }
 }

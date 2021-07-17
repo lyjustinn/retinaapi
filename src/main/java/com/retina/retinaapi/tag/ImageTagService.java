@@ -6,6 +6,7 @@ import com.retina.retinaapi.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.rekognition.model.Image;
 import software.amazon.awssdk.services.rekognition.model.Label;
 
 import java.io.IOException;
@@ -86,5 +87,14 @@ public class ImageTagService {
 
     public List<ImageTagDto> getRandomImageTags(int amount) {
         return this.mapper.mapImageTagDtos(this.imageTagRepository.findRandomImageTags(amount));
+    }
+
+    public void deleteTag (ImageTag tag) {
+        System.out.println("man");
+        this.imageTagRepository.deleteById(tag.getId());
+    }
+
+    public void deleteTags(List<Long> tags) {
+        this.imageTagRepository.deleteAllById(tags);
     }
 }
