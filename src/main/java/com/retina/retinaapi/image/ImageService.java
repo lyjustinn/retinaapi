@@ -14,10 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.text.Normalizer;
+import java.util.*;
 
 @Service
 public class ImageService {
@@ -56,9 +54,17 @@ public class ImageService {
     public void addImage (ImageDto imageDto, MultipartFile file, String username) throws IOException{
 
         User currentUser = this.userRepository.findByUsername(username).orElseThrow(() -> new IOException("User DNE"));
-        this.s3Util.putObject(file.getInputStream(), "users/" + username + "/" + file.getOriginalFilename(), file.getSize());
 
-        Image image = this.mapper.mapImage(imageDto, currentUser, file.getOriginalFilename());
+        String[] split = file.getOriginalFilename().split("[.]");
+        String extension = split[split.length-1];
+        String normalized = Normalizer.normalize(file.getOriginalFilename(), Normalizer.Form.NFD);
+        String alphaNumericName = normalized.replaceAll("[^A-Za-z0-9]", "");
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        final String resourceName = alphaNumericName + uuid + "." + extension;
+
+        this.s3Util.putObject(file.getInputStream(), "users/" + username + "/" + resourceName, file.getSize());
+
+        Image image = this.mapper.mapImage(imageDto, currentUser, resourceName);
 
         List<ImageTag> tags = this.imageTagService.generateTags(file);
 
