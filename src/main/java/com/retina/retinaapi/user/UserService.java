@@ -45,6 +45,8 @@ public class UserService implements UserDetailsService {
         return this.userRepository.findById(id).orElse(null);
     }
 
+    public User getUser(String username) { return this.userRepository.findByUsername(username).orElse(null);}
+
     public void addUser(UserDto userDto) {
         Optional<User> exists = this.userRepository.findByUsername(userDto.getUsername());
 
