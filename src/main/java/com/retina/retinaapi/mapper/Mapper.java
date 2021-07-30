@@ -29,7 +29,7 @@ public class Mapper {
     }
 
     public ImageTagDto mapImageTagDto (ImageTag imageTag) {
-        return new ImageTagDto(imageTag.getName(), imageTag.getImages());
+        return new ImageTagDto(imageTag.getId(), imageTag.getName(), imageTag.getImages());
     }
 
     public List<ImageTagDto> mapImageTagDtos (List<ImageTag> imageTags) {
