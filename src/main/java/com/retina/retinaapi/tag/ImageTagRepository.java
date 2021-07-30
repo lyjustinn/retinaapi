@@ -15,6 +15,6 @@ public interface ImageTagRepository extends JpaRepository<ImageTag, Long> {
 
     Optional<ImageTag> findByName (String name);
 
-    @Query(value="SELECT * FROM imageTag ORDER BY RAND() LIMIT :amount", nativeQuery = true)
+    @Query(value="select image_tag.* from image_tag join image_imagetag on image_tag.id=image_imagetag.image_tag_id group by image_tag.id having count(image_tag.id) >= 4 order by RAND() limit :amount", nativeQuery = true)
     List<ImageTag> findRandomImageTags(@Param("amount") int amount);
 }
