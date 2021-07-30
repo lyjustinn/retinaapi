@@ -28,7 +28,7 @@ public class ImageTagController {
         return ResponseEntity.ok(this.imageTagService.getAllTags());
     }
 
-    @GetMapping( path = "{tagId}")
+    @GetMapping( path = "id/{tagId}")
     public ResponseEntity<?> getTag(@PathVariable("tagId") Long tagId) {
         ImageTagDto imageTagDto = this.imageTagService.getImageTag(tagId);
 
@@ -37,7 +37,7 @@ public class ImageTagController {
         return ResponseEntity.ok(imageTagDto);
     }
 
-    @GetMapping( path = "{tagName}")
+    @GetMapping( path = "name/{tagName}")
     public ResponseEntity<?> getTagByName(@PathVariable("tagName") String tagName) {
         ImageTagDto imageTagDto = this.imageTagService.getImageTag(tagName);
 
@@ -46,7 +46,7 @@ public class ImageTagController {
         return ResponseEntity.ok(imageTagDto);
     }
 
-    @GetMapping( path = "/sample/{amount}")
+    @GetMapping( path = "sample/{amount}")
     public ResponseEntity<List<ImageTagDto>> getTagSample(@PathVariable("amount") int amount) {
         return ResponseEntity.ok(this.imageTagService.getRandomImageTags(amount));
     }
