@@ -14,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.text.Normalizer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -61,12 +63,13 @@ public class ImageService {
 
         String[] split = file.getOriginalFilename().split("[.]");
         String extension = split[split.length-1];
-        String normalized = Normalizer.normalize(file.getOriginalFilename(), Normalizer.Form.NFD);
-        String alphaNumericName = normalized.replaceAll("[^A-Za-z0-9]", "");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy MM dd hh mm ss");
+        Date utcNow = Date.from(Instant.now());
+        String dateString = dateFormat.format(utcNow).replaceAll("\\s+","");
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        final String resourceName = alphaNumericName + uuid + "." + extension;
+        final String resourceName = uuid + dateString + "." + extension;
 
-        this.s3Util.putObject(file.getInputStream(), "users/" + username + "/" + resourceName, file.getSize());
+        this.s3Util.putObject(file.getInputStream(), "users/" + resourceName, file.getSize());
 
         Image image = this.mapper.mapImage(imageDto, currentUser, resourceName);
 
@@ -88,7 +91,7 @@ public class ImageService {
 
         Image image = isImage.get();
 
-        if (image.getOwner().getUsername() != username) return;
+        if (!image.getOwner().getUsername().equals(username)) return;
 
         if (imageDto.getName().length() > 0) {
             image.setName(imageDto.getName());
