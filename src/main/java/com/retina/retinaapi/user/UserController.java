@@ -6,6 +6,7 @@ import com.retina.retinaapi.security.AuthRequest;
 import com.retina.retinaapi.security.AuthResponse;
 import com.retina.retinaapi.security.JwtUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -47,6 +48,20 @@ public class UserController {
         User user = this.userService.getUser(userId);
 
         if (user == null) return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
+
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping(path = "/current")
+    public ResponseEntity<?> getUser(@RequestHeader("Authorization") String authheader) {
+        final String token = authheader.substring(7);
+        final String username = this.jwtUtilities.extractUsername(token);
+
+        if (username.equals(null)) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        User user = this.userService.getUser(username);
+
+        if (user == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         return ResponseEntity.ok(user);
     }
