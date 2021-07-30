@@ -1,12 +1,12 @@
 package com.retina.retinaapi.user;
 
 import com.retina.retinaapi.mapper.UserDto;
+import com.retina.retinaapi.mapper.UserProfileDto;
 import com.retina.retinaapi.mapper.UserUpdateDto;
 import com.retina.retinaapi.security.AuthRequest;
 import com.retina.retinaapi.security.AuthResponse;
 import com.retina.retinaapi.security.JwtUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,8 +14,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @RestController
@@ -106,5 +104,15 @@ public class UserController {
         }
 
         return new ResponseEntity<String>("Could not perform update", HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping(path = "/images/{userId}")
+    public ResponseEntity<?> getUserImages(@PathVariable("userId") Long userId) {
+
+        UserProfileDto profileDto = this.userService.getUserProfileDto(userId);
+
+        if (profileDto == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        return ResponseEntity.ok(profileDto);
     }
 }

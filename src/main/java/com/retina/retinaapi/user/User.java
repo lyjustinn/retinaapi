@@ -24,6 +24,7 @@ public class User implements UserDetails {
     )
     private Long id;
 
+    @JsonIgnore
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -82,6 +83,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return username;
     }
