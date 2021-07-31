@@ -16,7 +16,7 @@ public class Mapper {
 
     public User mapUser (UserDto userDto) {
         if (userDto == null) return null;
-        return new User(userDto.getUsername(), userDto.getPassword(), userDto.getName(), userDto.getBio());
+        return new User(userDto.getUsername(), userDto.getPassword(), userDto.getFirstName(), userDto.getLastName(), userDto.getBio());
     }
 
     public Image mapImage (ImageDto imageDto, User owner, String resourceName) {
@@ -43,6 +43,6 @@ public class Mapper {
     }
 
     public UserProfileDto mapUserProfileDto (List<Image> userImages, User user) {
-        return new UserProfileDto(user.getId(), user.getName(), user.getBio(), userImages);
+        return new UserProfileDto(user.getId(), user.getFirstName(), user.getLastName(), user.getName(), user.getBio(), userImages);
     }
 }
