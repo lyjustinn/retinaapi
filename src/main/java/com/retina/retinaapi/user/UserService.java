@@ -1,18 +1,19 @@
 package com.retina.retinaapi.user;
 
+import com.retina.retinaapi.image.Image;
+import com.retina.retinaapi.image.ImageRepository;
 import com.retina.retinaapi.mapper.Mapper;
 import com.retina.retinaapi.mapper.UserDto;
+import com.retina.retinaapi.mapper.UserProfileDto;
 import com.retina.retinaapi.mapper.UserUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +26,14 @@ public class UserService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final ImageRepository imageRepository;
+
     @Autowired
-    public UserService(UserRepository userRepository, Mapper mapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, Mapper mapper, PasswordEncoder passwordEncoder, ImageRepository imageRepository) {
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.passwordEncoder = passwordEncoder;
+        this.imageRepository = imageRepository;
     }
 
     @Override
@@ -79,5 +83,15 @@ public class UserService implements UserDetailsService {
         }
 
         this.userRepository.save(user);
+    }
+
+    public UserProfileDto getUserProfileDto (Long id) {
+        User user = this.userRepository.findById(id).orElse(null);
+
+        if (user == null) return null;
+
+        List<Image> images = this.imageRepository.findImageByOwner(id);
+
+        return this.mapper.mapUserProfileDto(images, user);
     }
 }

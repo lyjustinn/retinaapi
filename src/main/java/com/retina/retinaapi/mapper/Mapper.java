@@ -41,4 +41,8 @@ public class Mapper {
 
         return imageTagDtos;
     }
+
+    public UserProfileDto mapUserProfileDto (List<Image> userImages, User user) {
+        return new UserProfileDto(user.getId(), user.getName(), user.getBio(), userImages);
+    }
 }
