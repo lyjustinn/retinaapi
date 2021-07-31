@@ -55,7 +55,7 @@ public class UserController {
         final String token = authheader.substring(7);
         final String username = this.jwtUtilities.extractUsername(token);
 
-        if (username.equals(null)) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (username == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         User user = this.userService.getUser(username);
 
@@ -110,6 +110,21 @@ public class UserController {
     public ResponseEntity<?> getUserImages(@PathVariable("userId") Long userId) {
 
         UserProfileDto profileDto = this.userService.getUserProfileDto(userId);
+
+        if (profileDto == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        return ResponseEntity.ok(profileDto);
+    }
+
+    @GetMapping(path = "/current/images")
+    public ResponseEntity<?> getCurrentUserImages(@RequestHeader("Authorization") String authheader) {
+
+        final String token = authheader.substring(7);
+        final String username = this.jwtUtilities.extractUsername(token);
+
+        if (username == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        UserProfileDto profileDto = this.userService.getUserProfileDto(username);
 
         if (profileDto == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 

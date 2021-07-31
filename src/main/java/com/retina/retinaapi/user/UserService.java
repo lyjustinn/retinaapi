@@ -70,15 +70,19 @@ public class UserService implements UserDetailsService {
 
         User user = isUser.get();
 
-        if (userDto.getName().length() > 0) {
-            user.setName(userDto.getName());
+        if (userDto.getFirstName() != null && userDto.getFirstName().length() > 0) {
+            user.setFirstName(userDto.getFirstName());
         }
 
-        if (userDto.getBio().length() > 0) {
+        if (userDto.getLastName() != null && userDto.getLastName().length() > 0) {
+            user.setLastName(userDto.getLastName());
+        }
+
+        if (userDto.getBio() != null) {
             user.setBio(userDto.getBio());
         }
 
-        if (userDto.getPassword().length() > 0) {
+        if (userDto.getLastName() != null && userDto.getPassword().length() > 0) {
             user.setPassword(this.passwordEncoder.encode(userDto.getPassword()));
         }
 
@@ -91,6 +95,16 @@ public class UserService implements UserDetailsService {
         if (user == null) return null;
 
         List<Image> images = this.imageRepository.findImageByOwner(id);
+
+        return this.mapper.mapUserProfileDto(images, user);
+    }
+
+    public UserProfileDto getUserProfileDto (String username) {
+        User user = this.userRepository.findByUsername(username).orElse(null);
+
+        if (user == null) return null;
+
+        List<Image> images = this.imageRepository.findImageByOwner(user.getId());
 
         return this.mapper.mapUserProfileDto(images, user);
     }

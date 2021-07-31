@@ -33,6 +33,12 @@ public class User implements UserDetails {
     private String password;
 
     @Column( nullable = false )
+    private String firstName;
+
+    @Column( nullable = false )
+    private String lastName;
+
+    @Transient
     private String name;
 
     private String bio;
@@ -45,24 +51,20 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public User(String username, String password, String name, String bio) {
+    public User(String username, String password, String firstName, String lastName, String bio) {
         this.username = username;
         this.password = password;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.bio = bio;
     }
 
-    public User(Long id, String username, String password) {
+    public User(Long id, String username, String password, String firstName, String lastName, String bio) {
         this.id = id;
         this.username = username;
         this.password = password;
-    }
-
-    public User(Long id, String username, String password, String name, String bio) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.bio = bio;
     }
 
@@ -97,11 +99,7 @@ public class User implements UserDetails {
     }
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return firstName+" "+lastName;
     }
 
     public String getBio() {
@@ -110,6 +108,22 @@ public class User implements UserDetails {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     @Override
